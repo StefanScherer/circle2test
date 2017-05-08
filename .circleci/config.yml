@@ -2,6 +2,7 @@ version: 2
 jobs:
   build:
     working_directory: ~/circle2test
+    machine: true
     steps:
       - checkout
       - run: docker version
