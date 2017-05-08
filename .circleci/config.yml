@@ -1,1 +1,10 @@
 version: 2
+jobs:
+  build:
+    steps:
+      - checkout
+      - run: docker version
+      - run: uname -a
+      - run: sudo service docker stop
+      - run: curl -fsSL https://get.docker.com/ | sudo sh
+      - run: docker version
