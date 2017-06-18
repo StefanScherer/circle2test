@@ -1,12 +1,11 @@
 version: 2
 jobs:
   build:
-    working_directory: /app
-    docker:
-      - image: docker:17.06.0-ce-rc4-git
+    working_directory: ~/circle2test
+    machine: true
     steps:
       - checkout
-      - setup_remote_docker
       - run: docker version
+      - run: curl -fsSL https://raw.githubusercontent.com/StefanScherer/docker-init/master/ubuntu/install-docker-ce.sh | sh
       - run: docker build -t app .
       - run: docker history app
