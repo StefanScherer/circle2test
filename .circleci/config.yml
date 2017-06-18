@@ -1,12 +1,10 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/circle2test
-    machine: true
+    working_directory: /app
+    docker:
+      - image: docker:17.06.0-ce-rc4-git
     steps:
       - checkout
-      - run: docker version
-      - run: uname -a
-      - run: sudo service docker stop
-      - run: curl -fsSL https://get.docker.com/ | sudo sh
+      - setup_remote_docker
       - run: docker version
