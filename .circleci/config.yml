@@ -8,3 +8,5 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: docker version
+      - run: docker build -t app .
+      - run: docker history app
