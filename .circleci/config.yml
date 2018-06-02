@@ -5,16 +5,28 @@ jobs:
     steps:
       - checkout
       - run: echo build
+      - run: touch artifact
       - run: ls
-      - run: |
-        if [ -z "${CIRCLE_TAG}" ]; then
-          echo "No version tag detected. Skip publishing."
-          exit 0
-        fi
-        echo publish
+  deploy:
+    machine: true
+    steps:
+      - checkout
+      - run: echo deploy
+      - run: ls
 
 workflows:
   version: 2
-  commit:
+  build-n-deploy:
     jobs:
-      - build
+      - build:
+          filters:
+            tags:
+              only: /.*/
+      - deploy:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
