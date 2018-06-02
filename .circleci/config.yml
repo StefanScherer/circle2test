@@ -6,22 +6,21 @@ jobs:
       - checkout
       - run: echo build
       - run: touch artifact
+      - run: echo CIRCLE_TAG=$CIRCLE_TAG
       - run: ls
   deploy:
     machine: true
     steps:
       - checkout
       - run: echo deploy
+      - run: echo CIRCLE_TAG=$CIRCLE_TAG
       - run: ls
 
 workflows:
   version: 2
   build-n-deploy:
     jobs:
-      - build:
-          filters:
-            tags:
-              only: /.*/
+      - build
       - deploy:
           requires:
             - build
