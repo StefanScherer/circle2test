@@ -6,20 +6,15 @@ jobs:
       - checkout
       - run: echo build
       - run: ls
-  deploy:
-    machine: true
-    steps:
-      - run: echo deploy
-      - run: ls
+      - run: |
+        if [ -z "${CIRCLE_TAG}" ]; then
+          echo "No version tag detected. Skip publishing."
+          exit 0
+        fi
+        echo publish
 
 workflows:
   version: 2
   commit:
     jobs:
       - build
-      - deploy:
-          requires:
-            - build
-          filters:
-            tags:
-              only: /.*/
