@@ -1,29 +1,22 @@
 version: 2
 jobs:
-  build-and-test-linux:
+  build:
     machine: true
     steps:
       - checkout
-      - run: docker version
-      - run: uname -a
-      # get latest CE version (17.05)
-      - run: curl -fsSL https://raw.githubusercontent.com/StefanScherer/docker-init/master/ubuntu/install-docker-ce.sh | sh
-      # get latest release candidate (17.06.0-ce-rc4)
-      - run: curl -fsSL https://raw.githubusercontent.com/StefanScherer/docker-init/master/ubuntu/install-docker-ce.sh | CHANNEL=test sh
-      - run: docker build -t app .
-      - run: docker history app
-
-  build-and-test-macos:
-    macos:
-      xcode: "9.0"
-
+      - run: echo build
+  deploy:
+    requires:
+      - build
     steps:
-      - checkout
-      - run: uname -a
+      - run: echo deploy
 
 workflows:
   version: 2
-  build-and-test:
+  commit:
     jobs:
-      - build-and-test-linux
-      - build-and-test-macos
+      - build
+      - deploy:
+          filters:
+            tags:
+              only: /.*/
