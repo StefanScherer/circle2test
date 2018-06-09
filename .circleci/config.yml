@@ -73,15 +73,15 @@ workflows:
                 - testing
                 - stable
                 - production
-      - deploy-to-unstable
+      - deploy-to-unstable:
           filters:
             branches:
               only:
                 - unstable
-      - install-test-linux
+      - install-test-linux:
           requires:
             - deploy-to-unstable
-      - update-test-linux
+      - update-test-linux:
           requires:
             - deploy-to-unstable
       # - install-test-windows
@@ -90,7 +90,7 @@ workflows:
       # - update-test-windows
       #     requires:
       #       - deploy-to-unstable
-      - merge-to-testing
+      - merge-to-testing:
           requires:
             - install-test-linux
             - update-test-linux
