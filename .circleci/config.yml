@@ -1,20 +1,65 @@
 version: 2
+
 jobs:
-  build:
+  build: &build
     machine: true
+
     steps:
       - checkout
-      - run: echo build
-      - run: touch artifact
-      - run: echo CIRCLE_TAG=$CIRCLE_TAG
-      - run: ls
-  deploy:
+
+      - run:
+          name: Build
+          command: echo "Build step  $CIRCLE_JOB in branch $CIRCLE_BRANCH"
+
+  # Triggered by our build pipeline only
+  merge-branch-to-next-stage: &merge
     machine: true
+
     steps:
       - checkout
-      - run: echo deploy
-      - run: echo CIRCLE_TAG=$CIRCLE_TAG
-      - run: ls
+
+      - run:
+          name: Merge changes into branch of the next stage
+          command: echo "Merge changes from $CIRCLE_BRANCH into next stage"
+
+  packer: &packer
+    docker:
+      - image: hashicorp/packer:1.2.4
+
+    steps:
+      - checkout
+
+      - run:
+          name: Run Packer build on Azure
+          command: echo "Run Packer $CIRCLE_JOB $PACKER_TEMPLATE in branch $CIRCLE_BRANCH"
+
+  deploy-to-unstable:
+    <<: *build
+
+  install-test-linux:
+    <<: *packer
+    environment:
+      - PACKER_TEMPLATE: "centos_7"
+
+  install-test-windows:
+    <<: *packer
+    environment:
+      - PACKER_TEMPLATE: "windows_2016"
+
+  update-test-linux:
+    <<: *packer
+    environment:
+      - PACKER_TEMPLATE: "centos_7"
+      - PLOSSYS_UPDATE: "true"
+
+  update-test-windows:
+    <<: *packer
+    environment:
+      - PACKER_TEMPLATE: "windows_2016"
+      - PLOSSYS_UPDATE: "true"
+
+  merge-to-testing:
+    <<: *merge
 
 workflows:
   version: 2
@@ -22,13 +67,30 @@ workflows:
     jobs:
       - build:
           filters:
-            tags:
-              only: /.*/
-      - deploy:
-          requires:
-            - build
-          filters:
-            tags:
-              only: /^v.*/
             branches:
-              ignore: /.*/
+              only:
+                - master
+                - testing
+                - stable
+                - production
+      - deploy-to-unstable
+          filters:
+            branches:
+              only:
+                - unstable
+      - install-test-linux
+          requires:
+            - deploy-to-unstable
+      - update-test-linux
+          requires:
+            - deploy-to-unstable
+      # - install-test-windows
+      #     requires:
+      #       - deploy-to-unstable
+      # - update-test-windows
+      #     requires:
+      #       - deploy-to-unstable
+      - merge-to-testing
+          requires:
+            - install-test-linux
+            - update-test-linux
