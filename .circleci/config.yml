@@ -85,13 +85,15 @@ workflows:
       - update-test-linux:
           requires:
             - deploy-to-unstable
-      # - install-test-windows
-      #     requires:
-      #       - deploy-to-unstable
-      # - update-test-windows
-      #     requires:
-      #       - deploy-to-unstable
+      - install-test-windows:
+          requires:
+            - deploy-to-unstable
+      - update-test-windows:
+          requires:
+            - deploy-to-unstable
       - merge-to-testing:
           requires:
             - install-test-linux
             - update-test-linux
+            - install-test-windows
+            - update-test-windows
