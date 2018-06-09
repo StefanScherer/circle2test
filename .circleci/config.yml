@@ -37,23 +37,23 @@ jobs:
   deploy-to-unstable:
     <<: *build
 
-  install-test-linux:
+  install-rhel-test:
     <<: *packer
     environment:
       - PACKER_TEMPLATE: "centos_7"
 
-  install-test-windows:
+  install-windows-test:
     <<: *packer
     environment:
       - PACKER_TEMPLATE: "windows_2016"
 
-  update-test-linux:
+  update-rhel-test:
     <<: *packer
     environment:
       - PACKER_TEMPLATE: "centos_7"
       - PLOSSYS_UPDATE: "true"
 
-  update-test-windows:
+  update-windows-test:
     <<: *packer
     environment:
       - PACKER_TEMPLATE: "windows_2016"
@@ -79,21 +79,21 @@ workflows:
             branches:
               only:
                 - unstable
-      - install-test-linux:
+      - install-rhel-test:
           requires:
             - deploy-to-unstable
-      - update-test-linux:
+      - update-rhel-test:
           requires:
             - deploy-to-unstable
-      - install-test-windows:
+      - install-windows-test:
           requires:
             - deploy-to-unstable
-      - update-test-windows:
+      - update-windows-test:
           requires:
             - deploy-to-unstable
       - merge-to-testing:
           requires:
-            - install-test-linux
-            - update-test-linux
-            - install-test-windows
-            - update-test-windows
+            - install-rhel-test
+            - update-rhel-test
+            - install-windows-test
+            - update-windows-test
