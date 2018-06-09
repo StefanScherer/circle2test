@@ -74,6 +74,8 @@ workflows:
                 - testing
                 - stable
                 - production
+  unstable-to-testing:
+    jobs:
       - deploy-to-unstable:
           filters:
             branches:
