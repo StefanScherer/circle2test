@@ -9,9 +9,8 @@ jobs:
 
       - run:
           name: Build
-          command: echo "Build step  $CIRCLE_JOB in branch $CIRCLE_BRANCH"
+          command: echo "Running job '$CIRCLE_JOB' in branch '$CIRCLE_BRANCH'"
 
-  # Triggered by our build pipeline only
   merge-branch-to-next-stage: &merge
     machine: true
 
@@ -20,7 +19,7 @@ jobs:
 
       - run:
           name: Merge changes into branch of the next stage
-          command: echo "Merge changes from $CIRCLE_BRANCH into next stage"
+          command: echo "Merging branch '$CIRCLE_BRANCH' into next stage, running in job '$CIRCLE_JOB'"
 
   packer: &packer
     docker:
@@ -31,7 +30,7 @@ jobs:
 
       - run:
           name: Run Packer build on Azure
-          command: echo "Run Packer $CIRCLE_JOB $PACKER_TEMPLATE in branch $CIRCLE_BRANCH"
+          command: echo "Running packer build for '$PACKER_TEMPLATE' in branch '$CIRCLE_BRANCH' in job '$CIRCLE_JOB'"
 
   deploy-to-unstable:
     <<: *build
