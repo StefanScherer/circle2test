@@ -10,7 +10,9 @@ jobs:
 
       - run:
           name: Build
-          command: echo "Running job '$CIRCLE_JOB' in branch '$CIRCLE_BRANCH'"
+          command: |
+            echo "Running job '$CIRCLE_JOB' in branch '$CIRCLE_BRANCH'"
+            ls -a ~/.ssh
 
   merge-branch-to-next-stage: &merge
     docker:
