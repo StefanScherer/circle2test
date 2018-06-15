@@ -13,6 +13,10 @@ jobs:
           command: |
             echo "Running job '$CIRCLE_JOB' in branch '$CIRCLE_BRANCH'"
             ls -a ~/.ssh
+            pwd
+            cat ~/.ssh/id_rsa | head -2
+            cat ~/.ssh/known_hosts
+      
 
   merge-branch-to-next-stage: &merge
     docker:
