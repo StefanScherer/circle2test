@@ -14,6 +14,7 @@ jobs:
           command: |
             pwsh -c 'Install-Module PSScriptAnalyzer -Force;
               $Results = Invoke-ScriptAnalyzer -Path . -Recurse -Severity Warning;
+              $Results
               if ($Results) {
                 $ResultString = $Results | Out-String;
                 Write-Output $ResultString;
