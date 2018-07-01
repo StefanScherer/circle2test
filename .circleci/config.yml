@@ -16,7 +16,7 @@ jobs:
               $Results = Invoke-ScriptAnalyzer -Path . -Recurse -Severity Warning;
               if ($Results) {
                 $ResultString = $Results | Out-String;
-                Write-Warning $ResultString;
+                Write-Output $ResultString;
                 Throw "Test failed. PSScriptAnalyzer found issues."
               }
             '
