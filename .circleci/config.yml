@@ -11,7 +11,7 @@ jobs:
       
       - run:
           name: Run PSScriptAnalyzer
-          command: pwsh -c "Install-Module PSScriptAnalyzer -Force; Invoke-ScriptAnalyzer -Path $pwd -Recurse -Severity Warning"
+          command: pwsh -c "Install-Module PSScriptAnalyzer -Force; Invoke-ScriptAnalyzer -Path . -Recurse -Severity Warning"
 
 # $Results = Invoke-ScriptAnalyzer -Path $pwd -Recurse -Severity Warning -ErrorAction SilentlyContinue
 # If ($Results) {
