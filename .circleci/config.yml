@@ -1,108 +1,32 @@
 version: 2
 
 jobs:
-  build: &build
+  
+  pscriptanalyzer:
     docker:
-      - image: circleci/node
-
+      - image: microsoft/powershell
+    
     steps:
       - checkout
-
-      - run:
-          name: Build
-          command: |
-            echo "Running job '$CIRCLE_JOB' in branch '$CIRCLE_BRANCH'"
-            ls -a ~/.ssh
-            pwd
-            echo $HOME
       
-
-  merge-branch-to-next-stage: &merge
-    docker:
-      - image: circleci/node
-
-    steps:
-      - checkout
-
       - run:
-          name: Merge changes into branch of the next stage
-          command: echo "Merging branch '$CIRCLE_BRANCH' into next stage, running in job '$CIRCLE_JOB'"
+          name: Run PSScriptAnalyzer
+          command: |
+            dir
 
-  packer: &packer
-    docker:
-      - image: hashicorp/packer:1.2.4
 
-    steps:
-      - checkout
-
-      - run:
-          name: Run Packer build on Azure
-          command: echo "Running packer build for '$PACKER_TEMPLATE' in branch '$CIRCLE_BRANCH' in job '$CIRCLE_JOB'"
-
-  deploy-to-unstable:
-    <<: *build
-
-  install-rhel-test:
-    <<: *packer
-    environment:
-      - PACKER_TEMPLATE: "centos_7"
-
-  install-windows-test:
-    <<: *packer
-    environment:
-      - PACKER_TEMPLATE: "windows_2016"
-
-  update-rhel-test:
-    <<: *packer
-    environment:
-      - PACKER_TEMPLATE: "centos_7"
-      - PLOSSYS_UPDATE: "true"
-
-  update-windows-test:
-    <<: *packer
-    environment:
-      - PACKER_TEMPLATE: "windows_2016"
-      - PLOSSYS_UPDATE: "true"
-
-  deploy-to-testing:
-    <<: *merge
+# $Results = Invoke-ScriptAnalyzer -Path $pwd -Recurse -Severity Warning -ErrorAction SilentlyContinue
+# If ($Results) {
+# $ResultString = $Results | Out-String
+# Write-Warning $ResultString
+# Add-AppveyorMessage -Message "PSScriptAnalyzer output contained one or more result(s) with 'Error' severity.`
+# Check the 'Tests' tab of this build for more details." -Category Error
+# Update-AppveyorTest -Name "PsScriptAnalyzer" -Outcome Failed -ErrorMessage $ResultString
+# Throw "Build failed. PsScriptAnalyzer found issues."
 
 workflows:
   version: 2
 
-  build-n-deploy:
+  build-n-test:
     jobs:
-      - build:
-          filters:
-            branches:
-              only:
-                - master
-                - testing
-                - stable
-                - production
-
-  unstable-to-testing:
-    jobs:
-      - deploy-to-unstable:
-          filters:
-            branches:
-              only:
-                - unstable
-      - install-rhel-test:
-          requires:
-            - deploy-to-unstable
-      - update-rhel-test:
-          requires:
-            - deploy-to-unstable
-      - install-windows-test:
-          requires:
-            - deploy-to-unstable
-      - update-windows-test:
-          requires:
-            - deploy-to-unstable
-      - deploy-to-testing:
-          requires:
-            - install-rhel-test
-            - update-rhel-test
-            - install-windows-test
-            - update-windows-test
+      - pscriptanalyzer
