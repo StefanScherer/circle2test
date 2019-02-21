@@ -1,39 +1,11 @@
 version: 2
-
 jobs:
-  
-  pscriptanalyzer:
-    docker:
-      - image: microsoft/powershell
-    
+  build:
+    working_directory: ~/circle2test
+    machine: true
     steps:
       - checkout
-      
-      - run:
-          name: Run PSScriptAnalyzer
-          command: |
-            pwsh -c 'Install-Module PSScriptAnalyzer -Force;
-              $Results = Invoke-ScriptAnalyzer -Path . -Recurse -Severity Warning;
-              $Results
-              if ($Results) {
-                $ResultString = $Results | Out-String;
-                Write-Output $ResultString;
-                Throw "Test failed. PSScriptAnalyzer found issues."
-              }
-            '
-
-# $Results = Invoke-ScriptAnalyzer -Path $pwd -Recurse -Severity Warning -ErrorAction SilentlyContinue
-# If ($Results) {
-# $ResultString = $Results | Out-String
-# Write-Warning $ResultString
-# Add-AppveyorMessage -Message "PSScriptAnalyzer output contained one or more result(s) with 'Error' severity.`
-# Check the 'Tests' tab of this build for more details." -Category Error
-# Update-AppveyorTest -Name "PsScriptAnalyzer" -Outcome Failed -ErrorMessage $ResultString
-# Throw "Build failed. PsScriptAnalyzer found issues."
-
-workflows:
-  version: 2
-
-  build-n-test:
-    jobs:
-      - pscriptanalyzer
+      - run: docker version
+      - run: uname -a
+      - run: docker run --rm --privileged hypriot/qemu-register
+      - run: docker build -t armhttp .

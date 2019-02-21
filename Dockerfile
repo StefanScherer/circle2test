@@ -1,13 +1,9 @@
-FROM golang AS build
+FROM arm32v7/golang
 
 COPY . /code
 WORKDIR /code
 
-RUN CGO_ENABLED=0 go build -a -installsuffix cgo http.go
-
-FROM scratch
-
-COPY --from=build /code/http /http
+RUN go build http.go
 
 EXPOSE 8080
 
