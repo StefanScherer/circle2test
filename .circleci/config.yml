@@ -2,9 +2,11 @@ version: 2
 jobs:
   build:
     working_directory: ~/circle2test
-    machine: true
+    docker:
+      - image: docker:18.06.2
     steps:
       - checkout
+      - setup_remote_docker
       - run: docker version
       - run: uname -a
       - run: docker run --rm --privileged hypriot/qemu-register
