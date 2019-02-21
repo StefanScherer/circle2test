@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/circle2test
     docker:
-      - image: docker:18.06.2
+      - image: docker:17.09.0
     steps:
       - checkout
       - setup_remote_docker
