@@ -1,4 +1,4 @@
-FROM arm32v7/golang
+FROM arm32v7/golang:1.12-stretch
 
 COPY . /code
 WORKDIR /code
