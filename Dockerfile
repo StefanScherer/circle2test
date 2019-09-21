@@ -1,13 +1,12 @@
-FROM golang AS build
+FROM arm32v7/php:7.3-apache AS pecltest
+RUN pecl install redis && docker-php-ext-enable redis
+
+FROM arm32v7/golang:1.12-stretch
 
 COPY . /code
 WORKDIR /code
 
-RUN CGO_ENABLED=0 go build -a -installsuffix cgo http.go
-
-FROM scratch
-
-COPY --from=build /code/http /http
+RUN go build http.go
 
 EXPOSE 8080
 
